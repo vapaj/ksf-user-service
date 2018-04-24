@@ -1,6 +1,6 @@
 (ns ksf-user-service.login-view
   (:require [ksf-user-service.util :as util]
-            [ksf-user-service.users-api :as api]))
+            [ksf-user-service.user-api :as api]))
 
 (def username (atom nil))
 (def password (atom nil))
