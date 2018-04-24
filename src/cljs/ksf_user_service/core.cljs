@@ -3,15 +3,28 @@
     (:require [reagent.core :as reagent :refer [atom]]
               [secretary.core :as secretary :include-macros true]
               [accountant.core :as accountant]
-              [ksf-user-service.users-api :as api]
+              [ksf-user-service.user-api :as api]
               [ksf-user-service.login-view :as login]
               [ksf-user-service.user-view :as user]))
 
+(def notifications (atom []))
+
+(go
+  (let [error (<! api/request-error-chan)]
+    (swap! notifications conj error)))
+
+(defn notifications-container []
+  [:div.notification-container
+   (for [notification @notifications]
+     ^{:key notification} [:div {:class "notification"} notification])])
+
 (defn user-management-page []
-  [:div.container
-   (if @api/is-logged-in?
-     [user/user-view]
-     [login/login-view])])
+  [:div
+   [notifications-container]
+   [:div.container
+    (if @api/auth-token
+      [user/user-view]
+      [login/login-view])]])
 
 (defonce page (atom #'user-management-page))
 

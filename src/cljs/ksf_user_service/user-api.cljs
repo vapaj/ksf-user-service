@@ -1,4 +1,4 @@
-(ns ksf-user-service.users-api
+(ns ksf-user-service.user-api
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
             [cljs.core.async :refer [>! <! chan split]]
@@ -10,20 +10,18 @@
 (def api-user-address-endpoint (str api-user-endpoint "/address"))
 
 (def auth-token (atom nil))
-(def is-logged-in? (atom false))
+
+(def request-error-chan (chan))
 
 (defn- set-token! [new-token]
-  (reset! auth-token new-token)
-  (reset! is-logged-in? true))
+  (reset! auth-token new-token))
 
 (defn handle-unsuccessful-request [http-req]
-  "Handles HTTP errors.
-  TODO: Implement it :~)"
+  "Handles HTTP errors. Puts the error message straight to `request-error-chan`."
   (go (let [response (<! http-req)
-            status (:status response)]
-        (cond
-          (<= 400 status 500) (prn "Bad request")
-          (>= status 500) (prn "Server error")))))
+            {status :status
+             body :body} response]
+        (>! request-error-chan body))))
 
 (defn- is-successful-request? [http-response]
   (= 200 (:status http-response)))
@@ -34,7 +32,7 @@
   (let [http-req (http-fn url (assoc params :with-credentials? false))
         [successful-req failed-req] (split is-successful-request? http-req)]
     (handle-unsuccessful-request failed-req)
-    (cljs.core.async/map (fn [res] (:body res)) [successful-req])))
+    (cljs.core.async/map #(:body %) [successful-req])))
 
 (defn login [username password]
   (let [params {:json-params
