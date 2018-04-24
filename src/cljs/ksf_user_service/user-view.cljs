@@ -1,31 +1,39 @@
 (ns ksf-user-service.user-view
   (:require [ksf-user-service.user :as user]
-            [ksf-user-service.util :as util]))
+            [ksf-user-service.util :as util]
+            [goog.functions]))
 
-(defn user-attribute [name value is-disabled?]
-  [:div.row {:class "col-sm-7 mx-auto"}
-    [:div.col {:class "col-sm-3 user-attribute"} name]
-    [:div.col {:class "col-sm-7"}
-     [:input {:type "text"
-              :class "form-control"
-              :value @value
-              :on-change #(reset! value (-> % .-target .-value))
-              :disabled is-disabled?}]]])
+(def update-address! (goog.functions.debounce #(user/update-address! %) 300))
+
+(defn handle-address-changes [input-value]
+  (let [new-address (-> input-value .-target .-value)]
+    (reset! user/user-address new-address)
+    (update-address! new-address)))
+
+(defn user-attribute-input [name value & [optional-attrs]]
+  (let [input-default-attrs {:type "text"
+                             :class "form-control"
+                             :value @value
+                             :disabled true}]
+    [:div.row {:class "col-sm-7 mx-auto"}
+     [:div.col {:class "col-sm-3 user-attribute"} name]
+     [:div.col {:class "col-sm-7"}
+      [:input (merge input-default-attrs optional-attrs)]]]))
+
+(defn address-input []
+  (let [address-input-attrs {:disabled false :on-change handle-address-changes}]
+    [:div
+     (conj
+      (user-attribute-input "Adress" user/user-address address-input-attrs)
+      [:div.attr-updated
+       (if @user/user-address-saved "✓")])]))
 
 (defn user-details []
   [:div
    (util/page-header "Användare profil")
-   (user-attribute "Namn" user/user-name true)
-   [:div
-    (conj
-     (user-attribute "Adress" user/user-address false)
-     [:div.attr-updated
-      (if @user/user-address-saved "Uppdaterat!")])]
-   (user-attribute "Email" user/user-email true)
-   [:div.row
-    [:div.col
-     [:button {:class "btn update-profile-button"
-               :on-click #(user/update-address!)} "Uppdatera"]]]])
+   (user-attribute-input "Namn" user/user-name)
+   (address-input)
+   (user-attribute-input "Email" user/user-email)])
 
 (defn user-view []
   (user/initialize-user!)

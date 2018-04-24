@@ -3,7 +3,7 @@
   (:require [cljs-http.client :as http]
             [cljs.core.async :refer [>! <! chan]]
             [reagent.core :as reagent :refer [atom]]
-            [ksf-user-service.users-api :as api]))
+            [ksf-user-service.user-api :as api]))
 
 (def user-id (atom nil))
 (def user-name (atom nil))
@@ -29,8 +29,8 @@
     (let [user (<! (api/fetch-user-info))]
       (set-user! user))))
 
-(defn update-address! []
+(defn update-address! [new-address]
   (go
-    (let [user (<! (api/update-address @user-address))]
+    (let [user (<! (api/update-address new-address))]
       (set-user! user)
       (reset! user-address-saved true))))
