@@ -21,8 +21,6 @@
 (defn password-input [password]
   (util/input "password" "password" "Lösenord" password))
 
-(defn login-text-input-row [])
-
 (defn login-button []
   [:button
    {:type "button"
