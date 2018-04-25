@@ -58,7 +58,7 @@ h2.ksf-heading {
   color: white;
 }
 
-.username-input {
+.username-input-row {
   margin-bottom: 10px
 }
 
@@ -72,6 +72,7 @@ span.page-header {
 }
 
 .user-attribute {
+  margin-top: 5px;
   font-weight: bold;
   text-align: right;
 }
@@ -92,16 +93,4 @@ span.page-header {
 
 .attr-updated {
   color: green
-}
-
-.notification-container {
-  position: relative;
-}
-
-.notification {
-  color: white;
-  background: #333;
-  border-bottom: solid 1px;
-  border-color: black;
-  padding: 5px;
 }
