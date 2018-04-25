@@ -5,10 +5,10 @@
             [reagent.core :as reagent :refer [atom]]
             [ksf-user-service.user-api :as api]))
 
-(def user-id (atom nil))
-(def user-name (atom nil))
-(def user-email (atom nil))
-(def user-address (atom nil))
+(def user-id (atom ""))
+(def user-name (atom ""))
+(def user-email (atom ""))
+(def user-address (atom ""))
 (def user-address-saved (atom false))
 
 (defn- update-user-address-saved [_ _ old-addr new-addr]
