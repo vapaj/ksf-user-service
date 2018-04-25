@@ -25,7 +25,7 @@
     [:div
      (conj
       (user-attribute-input "Adress" user/user-address address-input-attrs)
-      [:div.attr-updated
+      [:div {:class "user-attribute attr-updated"}
        (if @user/user-address-saved "✓")])]))
 
 (defn user-details []
