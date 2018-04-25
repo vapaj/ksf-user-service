@@ -1,7 +1,7 @@
 (ns ksf-user-service.user-api
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
-            [cljs.core.async :refer [>! <! chan split]]
+            [cljs.core.async :refer [<! chan split pipe]]
             [reagent.core :as reagent :refer [atom]]))
 
 (def api-base-url "https://frontend-test.api.ksfmedia.fi")
@@ -11,41 +11,45 @@
 
 (def auth-token (atom nil))
 
-(def request-error-chan (chan))
-
 (defn- set-token! [new-token]
   (reset! auth-token new-token))
 
-(defn handle-unsuccessful-request [http-req]
-  "Handles HTTP errors. Puts the error message straight to `request-error-chan`."
-  (go (let [response (<! http-req)
-            {status :status
-             body :body} response]
-        (>! request-error-chan body))))
+(defn make-http-req [http-fn url params]
+  "Makes an HTTP request."
+  (http-fn url (assoc params :with-credentials? false)))
 
 (defn- is-successful-request? [http-response]
+  (prn "http" http-response)
   (= 200 (:status http-response)))
 
-(defn make-http-req [http-fn url params]
-  "Makes an HTTP request and splits the response in successful and failed responses.
-  The successful request is returned, while the failed response is handled elsewhere."
-  (let [http-req (http-fn url (assoc params :with-credentials? false))
-        [successful-req failed-req] (split is-successful-request? http-req)]
-    (handle-unsuccessful-request failed-req)
+(defn filter-successful-requests [http-req]
+  (let [[successful-req failed-req] (split is-successful-request? http-req)]
     (cljs.core.async/map #(:body %) [successful-req])))
 
 (defn login [username password]
+  "Logs in and sets `auth-token` if success. Returns `http-req` to the caller.
+  NOTE: For some reason `http-req` needs to be defined inside `go` block,
+  so pipe it to the channel returned to caller."
   (let [params {:json-params
-                {:username username :password password}}]
+                {:username username :password password}}
+        http-req-to-caller (chan)]
     (go
-      (let [response (<! (make-http-req http/post api-login-endpoint params))]
-        (set-token! (:token response))))))
+      (let [http-req (make-http-req http/post api-login-endpoint params)
+            response (<! http-req)]
+        (do
+          (pipe http-req http-req-to-caller)
+          (if (is-successful-request? response) (set-token! (-> response :body :token))))))
+    http-req-to-caller))
 
 (defn fetch-user-info []
   (let [params {:headers {"Authorization" (str "Token " @auth-token)}}]
-    (make-http-req http/get api-user-endpoint params)))
+    (->
+     (make-http-req http/get api-user-endpoint params)
+     (filter-successful-requests))))
 
 (defn update-address [new-address]
   (let [params {:headers {"Authorization" (str "Token " @auth-token)}
                 :query-params {"new-address" new-address}}]
-    (make-http-req http/put api-user-address-endpoint params)))
+    (->
+     (make-http-req http/put api-user-address-endpoint params)
+     (filter-successful-requests))))
