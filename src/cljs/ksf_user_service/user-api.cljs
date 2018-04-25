@@ -22,7 +22,7 @@
   (prn "http" http-response)
   (= 200 (:status http-response)))
 
-(defn filter-successful-requests [http-req]
+(defn- filter-successful-requests [http-req]
   (let [[successful-req failed-req] (split is-successful-request? http-req)]
     (cljs.core.async/map #(:body %) [successful-req])))
 
