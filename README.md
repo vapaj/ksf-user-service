@@ -2,11 +2,11 @@
 
 A minimalistic app for managing KSF Media user accounts.
 
-The app uses [Reagent](https://reagent-project.github.io/) and [Bootstrap](https://getbootstrap.com/) for styling.
-
-The app is generated with [Leiningen Reagent template](https://github.com/reagent-project/reagent-template) and [Leiningen](https://leiningen.org/) is also used as a tool for managing the app.
+The app is written with [ClojureScript](http://i.imgur.com/NbWfuxL.png) and [Reagent](https://reagent-project.github.io/). [Bootstrap](https://getbootstrap.com/) is used for styling.
 
 ## Development mode
+
+It is expected that you have [Leiningen](https://leiningen.org/) installed.
 
 When running the app in development mode, the use of `figwheel` is couraged.
 
@@ -17,3 +17,9 @@ lein figwheel
 ```
 
 The server will be available at [http://localhost:3449](http://localhost:3449).
+
+## Notes
+
+- As no logging out mechanism is provided by the API, `auth-token` is stored in plain ol' variable, so it's gone after the page reloads. Local storage *could* be used for saving it (and removing it on logout)
+- Other than login, there is no handling for HTTP errors. A simple generic notification system for HTTP errors could be done with e.g. `core.async` channels quite nicely
+- I really need to practise my Swedish
