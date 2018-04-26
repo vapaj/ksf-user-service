@@ -25,7 +25,7 @@
   [:button
    {:type "button"
     :on-click #(login @username @password)
-    :class "btn login-button"}
+    :class "btn login__login-button"}
    "Logga in"])
 
 (defn validate-input [[elem attrs]]
@@ -37,8 +37,8 @@
 (defn login-form []
   [:div
    (util/page-header "Logga in")
-   [:form {:class "container login-form col-sm-6"}
-    [:div.row {:class "username-input-row"}
+   [:form {:class "container login__login-form col-sm-6"}
+    [:div.row {:class "login__username-input-row"}
      [:div#username-input {:class "mx-auto col-sm-8"}
       (validate-input (username-input username))]]
     [:div.row

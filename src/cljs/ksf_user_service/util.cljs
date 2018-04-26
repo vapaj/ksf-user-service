@@ -8,7 +8,7 @@
           :on-change #(reset! value (-> % .-target .-value))}])
 
 (defn page-header [header-text]
-  [:div.row {:class "page-header"}
+  [:div.row {:class "page-header__container"}
    [:div.col
     [:h2.ksf-heading
-     [:span.page-header header-text]]]])
+     [:span.page-header__header header-text]]]])

@@ -16,7 +16,7 @@
                              :value @value
                              :disabled true}]
     [:div.row {:class "col-sm-7 mx-auto"}
-     [:div.col {:class "col-sm-3 user-attribute"} name]
+     [:div.col {:class "col-sm-3 user__user-attribute"} name]
      [:div.col {:class "col-sm-7"}
       [:input (merge input-default-attrs optional-attrs)]]]))
 
@@ -25,7 +25,7 @@
     [:div
      (conj
       (user-attribute-input "Adress" user/user-address address-input-attrs)
-      [:div {:class "user-attribute attr-updated"}
+      [:div {:class "user__user-attribute user__attr-updated"}
        (if @user/user-address-saved "✓")])]))
 
 (defn user-details []

@@ -12,6 +12,10 @@ h2.ksf-heading {
   font-size: 2.75rem;
 }
 
+.row {
+  padding: 5px
+}
+
 #user-management-container {
   text-align: center;
 }
@@ -44,7 +48,7 @@ h2.ksf-heading {
   height: 38px;
 }
 
-.login-form {
+.login__login-form {
   padding-top: 30px;
   padding-bottom: 30px;
   background: #eceae6;
@@ -52,45 +56,31 @@ h2.ksf-heading {
   border-radius: 5px;
 }
 
-.login-button {
+.login__login-button {
   margin-top: 10px;
   background-color: #f07e26;
   color: white;
 }
 
-.username-input-row {
+.login__username-input-row {
   margin-bottom: 10px
 }
 
-div.page-header {
+.page-header__container {
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
-span.page-header {
+.page-header__header {
   border-bottom: 3px solid #f07e26;
 }
 
-.user-attribute {
+.user__user-attribute {
   margin-top: 5px;
   font-weight: bold;
   text-align: right;
 }
 
-.user-value {
-  text-align: left;
-}
-
-.update-profile-button {
-  margin-top: 10px;
-  background-color: #268729;
-  color: white;
-}
-
-.row {
-  padding: 5px
-}
-
-.attr-updated {
+.user__attr-updated {
   color: green
 }
