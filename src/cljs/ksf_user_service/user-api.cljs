@@ -19,7 +19,6 @@
   (http-fn url (assoc params :with-credentials? false)))
 
 (defn- is-successful-request? [http-response]
-  (prn "http" http-response)
   (= 200 (:status http-response)))
 
 (defn- filter-successful-requests [http-req]
@@ -29,7 +28,7 @@
 (defn login [username password]
   "Logs in and sets `auth-token` if success. Returns `http-req` to the caller.
   NOTE: For some reason `http-req` needs to be defined inside `go` block,
-  so pipe it to the channel returned to caller."
+  so pipe it to `http-req-to-caller`."
   (let [params {:json-params
                 {:username username :password password}}
         http-req-to-caller (chan)]
